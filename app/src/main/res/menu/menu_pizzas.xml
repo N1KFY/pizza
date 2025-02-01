@@ -1,0 +1,58 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <item
+        android:id="@+id/itemAgregarPizza"
+        android:icon="@android:drawable/ic_input_add"
+        android:title="Item"
+        app:showAsAction="always" />
+    <item
+        android:id="@+id/itemBuscar"
+        android:icon="@android:drawable/ic_menu_search"
+        android:title="Buscar"
+        app:showAsAction="always" />
+    <item
+        android:id="@+id/itemConfig"
+        android:icon="@drawable/baseline_coronavirus_24"
+        android:title="Item"
+        app:showAsAction="always" />
+    <item
+        android:id="@+id/itemTiposPizza"
+        android:title="Tipos de pizza" >
+        <menu >
+            <item
+                android:id="@+id/itemTodos"
+                android:checkable="true"
+                android:checked="true"
+                android:title="Todos" />
+            <item
+                android:id="@+id/itemPizzas"
+                android:checkable="true"
+                android:title="Pizzas" />
+            <item
+                android:id="@+id/itemPizzaVegana"
+                android:checkable="true"
+                android:title="Pizza vegana" />
+            <item
+                android:id="@+id/itemPizzaCeliaca"
+                android:checkable="true"
+                android:title="Pizza celiaca" />
+            <item
+                android:id="@+id/itemTopping"
+                android:checkable="true"
+                android:title="Topping" />
+        </menu>
+    </item>
+    <item android:title="Ordenar">
+        <menu>
+            <item
+                android:id="@+id/itemOrdenar"
+                android:checkable="true"
+                android:title="Referencia" />
+            <item
+                android:checkable="true"
+                android:title="Referencia + Descripcion" />
+        </menu>
+    </item>
+</menu>
