@@ -73,6 +73,28 @@ class secondActivity : AppCompatActivity() {
         val editText4 = findViewById<EditText>(R.id.editText4)
         val buttonSubmit = findViewById<Button>(R.id.buttonSubmit)
 
+//        buttonSubmit.setOnClickListener {
+//            val dato1 = autoCompleteTextView.text.toString()  // Campo con opciones sugeridas
+//            val dato2 = editText2.text.toString()
+//            val dato3 = editText3.text.toString()
+//            val dato4 = editText4.text.toString()
+//
+//            if (dato1.isNotEmpty() && dato2.isNotEmpty() && dato3.isNotEmpty() && dato4.isNotEmpty()) {
+//                Toast.makeText(this, "Dades enviades correctament!", Toast.LENGTH_SHORT).show()
+//
+//                val resultIntent = Intent().apply {
+//                    putExtra("FIELD1", dato1)
+//                    putExtra("FIELD2", dato2)
+//                    putExtra("FIELD3", dato3)
+//                    putExtra("FIELD4", dato4)
+//                }
+//                setResult(RESULT_OK, resultIntent)
+//                finish()
+//            } else {
+//                Toast.makeText(this, "Si us plau, omple tots els camps.", Toast.LENGTH_SHORT).show()
+//            }
+//        }
+
         buttonSubmit.setOnClickListener {
             val dato1 = autoCompleteTextView.text.toString()  // Campo con opciones sugeridas
             val dato2 = editText2.text.toString()
@@ -80,19 +102,34 @@ class secondActivity : AppCompatActivity() {
             val dato4 = editText4.text.toString()
 
             if (dato1.isNotEmpty() && dato2.isNotEmpty() && dato3.isNotEmpty() && dato4.isNotEmpty()) {
-                Toast.makeText(this, "Dades enviades correctament!", Toast.LENGTH_SHORT).show()
 
-                val resultIntent = Intent().apply {
-                    putExtra("FIELD1", dato1)
-                    putExtra("FIELD2", dato2)
-                    putExtra("FIELD3", dato3)
-                    putExtra("FIELD4", dato4)
+                if (dato1.startsWith("PI") || dato1.startsWith("PV") ||
+                    dato1.startsWith("PC") || dato1.startsWith("TO")) {
+
+                    if (dato1.length > 5){
+
+                        val resultIntent = Intent().apply {
+                            putExtra("FIELD1", dato1)
+                            putExtra("FIELD2", dato2)
+                            putExtra("FIELD3", dato3)
+                            putExtra("FIELD4", dato4)
+                        }
+                        setResult(RESULT_OK, resultIntent)
+                        finish()
+
+                    }else{
+                        Toast.makeText(this, "La referencia tener 6 caracteres", Toast.LENGTH_SHORT).show()
+                    }
+                } else {
+                    Toast.makeText(this, "La referencia debe comenzar por: PI, PV, PC, TO.", Toast.LENGTH_SHORT).show()
                 }
-                setResult(RESULT_OK, resultIntent)
-                finish()
+
             } else {
                 Toast.makeText(this, "Si us plau, omple tots els camps.", Toast.LENGTH_SHORT).show()
             }
         }
+
+
+
     }
 }
