@@ -1,5 +1,6 @@
 package com.epia.gestion_pizzeria_ac03.interfaces
 
+import android.content.ClipData.Item
 import android.content.Intent
 import android.os.Bundle
 import android.util.Log
@@ -42,6 +43,7 @@ class MainActivity : AppCompatActivity() {
     private var ivaActual: Int = 0  // Almacenar IVA
 
 
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 //        setContentView(R.layout.activity_pizzas)
@@ -69,7 +71,12 @@ class MainActivity : AppCompatActivity() {
         }
         return true
     }
+
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
+
+        val itemOrdenar = menu.findItem(R.id.itemOrdenar)
+        val itemRefDesc = menu.findItem(R.id.itemRefDesc)
+
         return when (item.itemId) {
             R.id.itemAgregarPizza -> {
                 val intent = Intent(this, secondActivity::class.java)
@@ -87,6 +94,101 @@ class MainActivity : AppCompatActivity() {
                //ajustarIva()
                 //traerIva()
                 mostrarPizzas()
+                true
+            }
+            R.id.itemOrdenar -> {
+                item.isChecked = !item.isChecked
+                if (item.isChecked) {
+                    Toast.makeText(this, "Orden por referencia activado", Toast.LENGTH_SHORT).show()
+                    itemRefDesc.isChecked = false
+                    ordenarPorReferencia()
+                } else {
+                    Toast.makeText(this, "Orden por referencia desactivado", Toast.LENGTH_SHORT).show()
+                    listaPizzas.clear()
+                    mostrarPizzas()
+                }
+                true
+            }
+            R.id.itemRefDesc -> {
+                item.isChecked = !item.isChecked
+                if (item.isChecked){
+                    Toast.makeText(this, "Orden por referencia y descripcion activado", Toast.LENGTH_SHORT).show()
+                    itemOrdenar.isChecked = false
+                    ordenarPorReferenciaDescripcion()
+                }
+                else{
+                    Toast.makeText(this, "Orden por referencia y descripcion desactivado", Toast.LENGTH_SHORT).show()
+                    listaPizzas.clear()
+                    mostrarPizzas()
+                }
+                true
+            }
+            R.id.itemTodos ->{
+                deseleccionarTiposPizza(item)
+                mostrarPizzas()
+//                item.isChecked = !item.isChecked
+//                if (item.isChecked){
+//                mostrarPizzas()
+//                }
+//                else{
+//                    deseleccionarTiposPizza(item)
+//                }
+                true
+            }
+            R.id.itemPizzas->{
+                deseleccionarTiposPizza(item)
+                mostrarRefPi()
+//                item.isChecked = !item.isChecked
+//                if (item.isChecked){
+//                    Toast.makeText(this, "Referencias: PI", Toast.LENGTH_SHORT).show()
+//                    mostrarRefPi()
+//                }
+//                else{
+//                    deseleccionarTiposPizza(item)
+//                    mostrarPizzas()
+//                }
+                true
+            }
+            R.id.itemPizzaVegana->{
+                deseleccionarTiposPizza(item)
+                mostrarRefPv()
+//                item.isChecked = !item.isChecked
+//                if (item.isChecked){
+//                    Toast.makeText(this, "Referencias: PV", Toast.LENGTH_SHORT).show()
+//                    mostrarRefPv()
+//                }
+//                else{
+//                    deseleccionarTiposPizza(item)
+//                    mostrarPizzas()
+//                }
+                true
+            }
+            R.id.itemPizzaCeliaca->{
+                deseleccionarTiposPizza(item)
+                mostrarRefPc()
+//                item.isChecked = !item.isChecked
+//                if (item.isChecked){
+//                    Toast.makeText(this, "Referencias: PC", Toast.LENGTH_SHORT).show()
+//                    mostrarRefPc()
+//                }
+//                else{
+//                    deseleccionarTiposPizza(item)
+//                    mostrarPizzas()
+//                }
+                true
+            }
+            R.id.itemTopping->{
+                deseleccionarTiposPizza(item)
+                mostrarRefTo()
+//                item.isChecked = !item.isChecked
+//                if (item.isChecked){
+//                    Toast.makeText(this, "Referencias: TO", Toast.LENGTH_SHORT).show()
+//                    mostrarRefTo()
+//                }
+//                else{
+//                    deseleccionarTiposPizza(item)
+//                    mostrarPizzas()
+//                }
                 true
             }
 
@@ -224,6 +326,78 @@ class MainActivity : AppCompatActivity() {
     fun mostrarPizzas(){
         refrescarRecyclerView()
     }
+
+    fun ordenarPorReferencia(){
+        GlobalScope.launch(Dispatchers.IO){
+            listaPizzas = pizzaDao.getPizzasPorReferencia()
+            withContext(Dispatchers.Main){
+                refrescarRecyclerView2(listaPizzas)
+            }
+        }
+    }
+
+    fun ordenarPorReferenciaDescripcion(){
+        GlobalScope.launch(Dispatchers.IO){
+            listaPizzas = pizzaDao.getPizzasReferenciaDecripcion()
+            withContext(Dispatchers.Main){
+                refrescarRecyclerView2(listaPizzas)
+            }
+        }
+    }
+
+    fun mostrarRefPi(){
+        GlobalScope.launch(Dispatchers.IO){
+            listaPizzas = pizzaDao.getPizzasPorReferenciaPi()
+            withContext(Dispatchers.Main){
+                refrescarRecyclerView2(listaPizzas)
+            }
+        }
+    }
+
+    fun mostrarRefPv(){
+        GlobalScope.launch(Dispatchers.IO){
+            listaPizzas = pizzaDao.getPizzasPorReferenciaPv()
+            withContext(Dispatchers.Main){
+                refrescarRecyclerView2(listaPizzas)
+            }
+        }
+    }
+
+    fun mostrarRefPc(){
+        GlobalScope.launch(Dispatchers.IO){
+            listaPizzas = pizzaDao.getPizzasPorReferenciaPc()
+            withContext(Dispatchers.Main){
+                refrescarRecyclerView2(listaPizzas)
+            }
+        }
+    }
+
+    fun mostrarRefTo(){
+        GlobalScope.launch(Dispatchers.IO){
+            listaPizzas = pizzaDao.getPizzasPorReferenciaTo()
+            withContext(Dispatchers.Main){
+                refrescarRecyclerView2(listaPizzas)
+            }
+        }
+    }
+
+    fun deseleccionarTiposPizza(item: MenuItem){
+        val tiposPizza = listOf(
+            R.id.itemTodos,
+            R.id.itemPizzas,
+            R.id.itemPizzaVegana,
+            R.id.itemPizzaCeliaca,
+            R.id.itemTopping
+        )
+
+        val idItem = item.itemId
+
+        tiposPizza.forEach{ menuItemId ->
+            menu.findItem(menuItemId)?.isChecked = (menuItemId == idItem)
+        }
+    }
+
+
 
 //    fun ajustarIva(): Int {
 //        var iva = 0

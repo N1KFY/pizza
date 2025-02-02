@@ -9,7 +9,7 @@ import androidx.room.Update
 import org.w3c.dom.Text
 
 @Dao
-interface PizzaDao {
+interface PizzaDao{
     // The flow always holds/caches latest version of data. Notifies its observers when the
     // data has changed.
     @Query("SELECT * FROM pizza")
@@ -18,11 +18,27 @@ interface PizzaDao {
     @Query("SELECT * FROM pizza WHERE descripcion = :referencia")
     fun getPizza(referencia : String): Pizza
 
+    @Query("SELECT * FROM pizza ORDER BY referencia ASC")
+    fun getPizzasPorReferencia(): MutableList<Pizza>
+
     @Query("SELECT * FROM pizza WHERE descripcion LIKE '%' || :descripcion || '%'")
     fun buscarPizzaReferencia(descripcion: String): MutableList<Pizza>
 
-//    @Query("SELECT * FROM pizza WHERE email = :email")
-//    fun getFriend(email: String): Pizza
+    @Query("SELECT * FROM pizza ORDER BY descripcion ASC, referencia ASC")
+    fun getPizzasReferenciaDecripcion(): MutableList<Pizza>
+
+    @Query("SELECT * FROM pizza WHERE referencia LIKE 'PI%'")
+    fun getPizzasPorReferenciaPi(): MutableList<Pizza>
+
+    @Query("SELECT * FROM pizza WHERE referencia LIKE 'PV%'")
+    fun getPizzasPorReferenciaPv(): MutableList<Pizza>
+
+    @Query("SELECT * FROM pizza WHERE referencia LIKE 'PC%'")
+    fun getPizzasPorReferenciaPc(): MutableList<Pizza>
+
+    @Query("SELECT * FROM pizza WHERE referencia LIKE 'TO%'")
+    fun getPizzasPorReferenciaTo(): MutableList<Pizza>
+
 
     @Insert(onConflict = OnConflictStrategy.IGNORE)
     fun insert(pizza: Pizza)

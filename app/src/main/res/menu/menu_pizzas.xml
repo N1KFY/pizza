@@ -51,6 +51,7 @@
                 android:checkable="true"
                 android:title="Referencia" />
             <item
+                android:id="@+id/itemRefDesc"
                 android:checkable="true"
                 android:title="Referencia + Descripcion" />
         </menu>
