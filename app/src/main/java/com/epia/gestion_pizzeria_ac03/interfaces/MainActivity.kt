@@ -49,9 +49,9 @@ class MainActivity : AppCompatActivity() {
         supportActionBar?.show()
 
         intentPizzas()
-//        intentConfig()
+       // intentConfig()
 //
-//        traerIva()
+       // traerIva()
 
         pizzaDao = (applicationContext as App).db.pizzaDao()
         parentLayout = findViewById<View>(android.R.id.content)
@@ -84,8 +84,8 @@ class MainActivity : AppCompatActivity() {
             R.id.itemConfig -> {
                 val intent = Intent(this, configActivity::class.java)
                 resultLauncher.launch(intent)
-//                ajustarIva()
-//                traerIva()
+               //ajustarIva()
+                //traerIva()
                 mostrarPizzas()
                 true
             }
