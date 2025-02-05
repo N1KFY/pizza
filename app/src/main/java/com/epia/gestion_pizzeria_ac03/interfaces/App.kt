@@ -8,8 +8,7 @@ import com.epia.gestion_pizzeria_ac03.room.PizzaDb
 
 class App: Application() {
     lateinit var db: PizzaDb
-    lateinit var dbIva: IvaDao
-    //lateinit var dbIva: IvaDb  // Canvia de IvaDao a IvaDb
+    lateinit var dbIva: IvaDb
 
     override fun onCreate() {
         super.onCreate()
@@ -17,6 +16,12 @@ class App: Application() {
             this,
             PizzaDb::class.java,
             "room-db"
+        ).fallbackToDestructiveMigration() .build()
+
+        dbIva = Room.databaseBuilder(
+            this,
+            IvaDb::class.java,
+            "iva-db"
         ).fallbackToDestructiveMigration() .build()
     }
 }

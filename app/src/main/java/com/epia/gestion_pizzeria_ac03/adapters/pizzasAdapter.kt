@@ -9,8 +9,8 @@ import com.epia.gestion_pizzeria_ac03.room.Pizza
 import android.view.View
 import android.widget.TextView
 import androidx.cardview.widget.CardView
-import com.epia.gestion_pizzeria_ac03.room.IvaDao
-import com.epia.gestion_pizzeria_ac03.room.PizzaDao
+import androidx.core.content.ContextCompat
+
 
 
 class pizzasAdapter
@@ -42,10 +42,11 @@ class pizzasAdapter
         return pizzas.size
     }
 
-    fun updateItems(pizzasAMostrar: MutableList<Pizza>) {
-        pizzas.clear() // Limpia la lista actual
-        pizzas.addAll(pizzasAMostrar) // Agrega los nuevos items
-        notifyDataSetChanged() // Notifica que los datos han cambiado
+    fun updateItems(pizzasAMostrar: MutableList<Pizza>, newIva: Int) {
+        pizzas.clear() // Limpiar lista
+        pizzas.addAll(pizzasAMostrar) // Agrega
+        iva = newIva // Actualizar IVA
+        notifyDataSetChanged()
     }
 
 
@@ -56,13 +57,8 @@ class pizzasAdapter
         val precio_Sin_Iva = view.findViewById<TextView>(R.id.tvPrecio_sin_Iva)
         val precio_Con_Iva = view.findViewById<TextView>(R.id.tvPrecio_con_iva)
 
-//        // cogemos la CARD porque haremos temas de decoración.
-//        val card = view.findViewById<CardView>(R.id.card)
-//
-//        // nos guardamos la view para el Snackbar
-//        val countriesView: View = view
-
-
+        // cogemos la CARD porque haremos temas de decoración.
+        val card = view.findViewById<CardView>(R.id.card)
 
 
         fun bind(pizza: Pizza, context: Context) {
@@ -71,85 +67,25 @@ class pizzasAdapter
             tipo.text = pizza.tipo
             precio_Sin_Iva.text = pizza.precioSinIva.toString()
             // para meter iva
-            val precioConIva = pizza.precioSinIva * (1 + iva / 100)
+            val precioConIva = pizza.precioSinIva * (1 + iva.toDouble() / 100)
             precio_Con_Iva.text = String.format("%.2f", precioConIva) // Mostrar con 2 decimales
 
 
+            val colorPi = ContextCompat.getColor(context, R.color.color_pi)
+            val colorPv = ContextCompat.getColor(context, R.color.color_pv)
+            val colorPc = ContextCompat.getColor(context, R.color.color_pc)
+            val colorTo = ContextCompat.getColor(context, R.color.color_to)
 
-//            if (pais.km2 <= 999999) {
-//                km2.text = pais.km2.toString()
-//                km2.setTextAppearance(R.style.TextoNormal)
-//            }
-//            else {
-//                km2.text = pais.km2.toString()
-//                km2.setTextAppearance(R.style.TextoNegrita)
-//            }
-//
-//            emoji.text = pais.emoji
-
-
-/////////////////////////////////////////////////////////////////////////////////////////////////
-//            // Cambia la imagen según el estado actual de "favorito"
-//            if (pais.favoritos) {
-//                imvFavoritos.setImageResource(android.R.drawable.btn_star_big_on)
-//            } else {
-//                imvFavoritos.setImageResource(android.R.drawable.btn_star_big_off)
-//            }
-//
-//            // Maneja el clic para alternar el estado de favorito
-//            imvFavoritos.setOnClickListener {
-//                pais.favoritos = !pais.favoritos // Alterna el estado
-//                // informa agregado a favoritos
-//                Snackbar.make(countriesView,
-//                    pais.name_es + " Agregado a favoritos",
-//                    Snackbar.LENGTH_LONG).show()
-//                notifyItemChanged(adapterPosition) // Actualiza la tarjeta en el RecyclerView
-//            }
-//////////////////////////////////////////////////////////////////////////////////////////////////
-
-//            emoji.setOnClickListener {
-//                var nombre = pais.name_es.lowercase()
-//                // Reemplazar espacios por guiones bajos
-//                nombre = nombre.replace(" ", "_")
-//                // Separa los acentos de las vocales -> á = a'
-//                var sinAcentos = Normalizer.normalize(nombre, Normalizer.Form.NFD)
-//                // elimina todos los acentos
-//                sinAcentos = sinAcentos.replace("\\p{M}".toRegex(), "")
-//
-//                val url = "https://es.wikipedia.org/wiki/" + sinAcentos
-//                // Crear un Intent para abrir la URL en el navegador
-//                val intent = Intent(Intent.ACTION_VIEW, Uri.parse(url))
-//                context.startActivity(intent)
-//            }
-
-
-
-
-//            // Obtener el color de fondo para la tarjeta según el continente
-//            val colorEurope = ContextCompat.getColor(context, R.color.color_europe)
-//            val colorAfrica = ContextCompat.getColor(context, R.color.color_africa)
-//            val colorOceania = ContextCompat.getColor(context, R.color.color_oceania)
-//            val colorAntartida = ContextCompat.getColor(context, R.color.color_antartida)
-//            val colorAsia = ContextCompat.getColor(context, R.color.color_asia)
-//            val colorAsur = ContextCompat.getColor(context, R.color.color_america_sur)
-//            val colorAnorte = ContextCompat.getColor(context, R.color.color_america_norte)
-
-//            // Aplicar el color de fondo según el continente
-//            if (pais.continent_en.lowercase() == "europe") {
-//                card.setCardBackgroundColor(colorEurope)
-//            } else if (pais.continent_en.lowercase() == "africa") {
-//                card.setCardBackgroundColor(colorAfrica)
-//            } else if (pais.continent_en.lowercase() == "oceania") {
-//                card.setCardBackgroundColor(colorOceania)
-//            } else if (pais.continent_en.lowercase() == "asia") {
-//                card.setCardBackgroundColor(colorAsia)
-//            } else if (pais.continent_en.lowercase() == "south america") {
-//                card.setCardBackgroundColor(colorAsur)
-//            } else if (pais.continent_en.lowercase() == "north america") {
-//                card.setCardBackgroundColor(colorAnorte)
-//            } else {
-//                card.setCardBackgroundColor(colorAntartida)
-//            }
+            // Aplicar el color de fondo según el continente
+            if (pizza.referencia.startsWith("PI")) {
+                card.setCardBackgroundColor(colorPi)
+            } else if (pizza.referencia.startsWith("PV")) {
+                card.setCardBackgroundColor(colorPv)
+            } else if (pizza.referencia.startsWith("PC")) {
+                card.setCardBackgroundColor(colorPc)
+            } else {
+                card.setCardBackgroundColor(colorTo)
+            }
         }
 
     }

@@ -1,6 +1,5 @@
 package com.epia.gestion_pizzeria_ac03.interfaces
 
-import android.content.ClipData.Item
 import android.content.Intent
 import android.os.Bundle
 import android.util.Log
@@ -18,7 +17,6 @@ import androidx.recyclerview.widget.RecyclerView
 import com.epia.gestion_pizzeria_ac03.R
 import com.epia.gestion_pizzeria_ac03.adapters.pizzasAdapter
 import com.epia.gestion_pizzeria_ac03.room.IvaDao
-import com.epia.gestion_pizzeria_ac03.room.IvaDb
 import com.epia.gestion_pizzeria_ac03.room.PizzaDao
 import com.epia.gestion_pizzeria_ac03.room.Pizza
 import com.google.android.material.snackbar.Snackbar
@@ -29,12 +27,14 @@ class MainActivity : AppCompatActivity() {
 
     // Llançador per gestionar el resultat retornat
     private lateinit var resultLauncher: ActivityResultLauncher<Intent>
+    private lateinit var resultLauncherConfig: ActivityResultLauncher<Intent>
     private lateinit var menu: Menu
     private lateinit var pizzaDao: PizzaDao
     private lateinit var parentLayout: View
     lateinit var myRecyclerView: RecyclerView
     var mAdapter: pizzasAdapter? = null
     var listaPizzas: MutableList<Pizza> = ArrayList()
+    var listaFiltros: MutableList<Pizza> = ArrayList()
     private var dato1: String = ""
     private var dato2: String = ""
     private var dato3: String = ""
@@ -44,24 +44,21 @@ class MainActivity : AppCompatActivity() {
 
 
 
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-//        setContentView(R.layout.activity_pizzas)
-//        parentLayout = findViewById<View>(android.R.id.content)
+        setContentView(R.layout.activity_pizzas)
+        parentLayout = findViewById<View>(android.R.id.content)
         supportActionBar?.show()
-
         intentPizzas()
-       // intentConfig()
-//
-       // traerIva()
+        intentConfig()
 
         pizzaDao = (applicationContext as App).db.pizzaDao()
-        parentLayout = findViewById<View>(android.R.id.content)
+        ivaDao = (applicationContext as App).dbIva.ivaDao()
 
-        setContentView(R.layout.activity_pizzas)
-
-
+        traerIva()
         mostrarPizzas()
+
     }
 
     override fun onCreateOptionsMenu(menu: Menu?): Boolean {
@@ -73,9 +70,16 @@ class MainActivity : AppCompatActivity() {
     }
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
-
+        // para seleccionar un orden u otro
         val itemOrdenar = menu.findItem(R.id.itemOrdenar)
         val itemRefDesc = menu.findItem(R.id.itemRefDesc)
+        val itemPi = menu.findItem(R.id.itemPizzas)
+        val itemPv = menu.findItem(R.id.itemPizzaVegana)
+        val itemTo = menu.findItem(R.id.itemTopping)
+        val itemPc = menu.findItem(R.id.itemPizzaCeliaca)
+
+
+
 
         return when (item.itemId) {
             R.id.itemAgregarPizza -> {
@@ -90,35 +94,57 @@ class MainActivity : AppCompatActivity() {
             }
             R.id.itemConfig -> {
                 val intent = Intent(this, configActivity::class.java)
-                resultLauncher.launch(intent)
-               //ajustarIva()
-                //traerIva()
-                mostrarPizzas()
+                resultLauncherConfig.launch(intent)
                 true
             }
             R.id.itemOrdenar -> {
+
                 item.isChecked = !item.isChecked
-                if (item.isChecked) {
-                    Toast.makeText(this, "Orden por referencia activado", Toast.LENGTH_SHORT).show()
+
+                if (item.isChecked &&
+                    (itemPi.isChecked || itemPc.isChecked || itemPv.isChecked || itemTo.isChecked)) {
+
                     itemRefDesc.isChecked = false
+                    Toast.makeText(this, "Orden por referencia activado", Toast.LENGTH_SHORT).show()
+                    listaPizzas = ordenarPorReferenciaFiltro(listaPizzas)
+                    mostrarPizzasFiltros(listaPizzas)
+
+                }else if (item.isChecked &&
+                    (!itemPi.isChecked && !itemPc.isChecked && !itemPv.isChecked && !itemTo.isChecked)) {
+
+                    listaFiltros.clear()
                     ordenarPorReferencia()
-                } else {
+
+                }
+                else if (!item.isChecked){
                     Toast.makeText(this, "Orden por referencia desactivado", Toast.LENGTH_SHORT).show()
-                    listaPizzas.clear()
+                    listaFiltros.clear()
                     mostrarPizzas()
                 }
-                true
+                    true
             }
             R.id.itemRefDesc -> {
+
                 item.isChecked = !item.isChecked
-                if (item.isChecked){
-                    Toast.makeText(this, "Orden por referencia y descripcion activado", Toast.LENGTH_SHORT).show()
+
+                if (item.isChecked &&
+                    (itemPi.isChecked || itemPc.isChecked || itemPv.isChecked || itemTo.isChecked)) {
+
                     itemOrdenar.isChecked = false
+                    Toast.makeText(this, "Orden por referencia activado", Toast.LENGTH_SHORT).show()
+                    listaPizzas = ordenarPorReferenciaDescripcionFiltro(listaPizzas)
+                    mostrarPizzasFiltros(listaPizzas)
+
+                }else if (item.isChecked &&
+                    (!itemPi.isChecked && !itemPc.isChecked && !itemPv.isChecked && !itemTo.isChecked)) {
+
+                    listaFiltros.clear()
                     ordenarPorReferenciaDescripcion()
+
                 }
-                else{
-                    Toast.makeText(this, "Orden por referencia y descripcion desactivado", Toast.LENGTH_SHORT).show()
-                    listaPizzas.clear()
+                else if (!item.isChecked){
+                    Toast.makeText(this, "Orden por referencia desactivado", Toast.LENGTH_SHORT).show()
+                    listaFiltros.clear()
                     mostrarPizzas()
                 }
                 true
@@ -152,43 +178,16 @@ class MainActivity : AppCompatActivity() {
             R.id.itemPizzaVegana->{
                 deseleccionarTiposPizza(item)
                 mostrarRefPv()
-//                item.isChecked = !item.isChecked
-//                if (item.isChecked){
-//                    Toast.makeText(this, "Referencias: PV", Toast.LENGTH_SHORT).show()
-//                    mostrarRefPv()
-//                }
-//                else{
-//                    deseleccionarTiposPizza(item)
-//                    mostrarPizzas()
-//                }
                 true
             }
             R.id.itemPizzaCeliaca->{
                 deseleccionarTiposPizza(item)
                 mostrarRefPc()
-//                item.isChecked = !item.isChecked
-//                if (item.isChecked){
-//                    Toast.makeText(this, "Referencias: PC", Toast.LENGTH_SHORT).show()
-//                    mostrarRefPc()
-//                }
-//                else{
-//                    deseleccionarTiposPizza(item)
-//                    mostrarPizzas()
-//                }
                 true
             }
             R.id.itemTopping->{
                 deseleccionarTiposPizza(item)
                 mostrarRefTo()
-//                item.isChecked = !item.isChecked
-//                if (item.isChecked){
-//                    Toast.makeText(this, "Referencias: TO", Toast.LENGTH_SHORT).show()
-//                    mostrarRefTo()
-//                }
-//                else{
-//                    deseleccionarTiposPizza(item)
-//                    mostrarPizzas()
-//                }
                 true
             }
 
@@ -218,7 +217,7 @@ class MainActivity : AppCompatActivity() {
 
 
 
-    fun refrescarRecyclerView() {
+    fun mostrarPizzas() {
         GlobalScope.launch(Dispatchers.IO) {
             try {
                 val pizzas = pizzaDao.getPizzas() // Accedir a la base de dades en un fil de segon pla
@@ -231,13 +230,13 @@ class MainActivity : AppCompatActivity() {
                         mAdapter = pizzasAdapter(pizzas,ivaActual,this@MainActivity)
                         myRecyclerView.adapter = mAdapter
                     } else {
-                        mAdapter?.updateItems(pizzas)
+                        mAdapter?.updateItems(pizzas,ivaActual)
                     }
                 }
             } catch (e: Exception) {
                 e.printStackTrace()
                 withContext(Dispatchers.Main) {
-                    Snackbar.make(parentLayout, "Error carregant les dades: ${e.message}", Snackbar.LENGTH_SHORT).show()
+                    Snackbar.make(parentLayout, "Error carrgando datos: ${e.message}", Snackbar.LENGTH_SHORT).show()
                 }
             }
         }
@@ -273,17 +272,17 @@ class MainActivity : AppCompatActivity() {
         val builder = AlertDialog.Builder(this)
         builder.setTitle("Buscar Pizzas")
 
-        // Configurar un EditText per introduir la cerca
+        // Configurar un EditText introducir la bisqueda
         val input = EditText(this)
         input.hint = "Escribe la referencia a buscar"
         builder.setView(input)
 
-        // Configurar els botons del diàleg
+        // Configurar botones
         builder.setPositiveButton("Buscar") { _, _ ->
             var searchText = input.text.toString()
             if (searchText.isNotEmpty()) {
                 GlobalScope.launch(Dispatchers.IO) {
-                    refrescarRecyclerView2(pizzaDao.buscarPizzaReferencia(searchText))
+                    mostrarPizzasFiltros(pizzaDao.buscarPizzaReferencia(searchText))
                     }
             } else {
                 Toast.makeText(this, "Introduce un texto!", Toast.LENGTH_SHORT).show()
@@ -299,7 +298,7 @@ class MainActivity : AppCompatActivity() {
 
 
 
-    fun refrescarRecyclerView2(list: MutableList<Pizza>) {
+    fun mostrarPizzasFiltros(list: MutableList<Pizza>) {
         GlobalScope.launch(Dispatchers.IO) {
             try {
                 withContext(Dispatchers.Main) {
@@ -311,45 +310,66 @@ class MainActivity : AppCompatActivity() {
                         mAdapter = pizzasAdapter(list,ivaActual,this@MainActivity)
                         myRecyclerView.adapter = mAdapter
                     } else {
-                        mAdapter?.updateItems(list)
+                        mAdapter?.updateItems(list,ivaActual)
                     }
                 }
             } catch (e: Exception) {
                 e.printStackTrace()
                 withContext(Dispatchers.Main) {
-                    Snackbar.make(parentLayout, "Error carregant les dades: ${e.message}", Snackbar.LENGTH_SHORT).show()
+                    Snackbar.make(parentLayout, "Error carrgando datos: ${e.message}", Snackbar.LENGTH_SHORT).show()
                 }
             }
         }
     }
 
-    fun mostrarPizzas(){
-        refrescarRecyclerView()
-    }
+//    fun mostrarPizzas(){
+//        mostrarPizzas()
+//    }
 
     fun ordenarPorReferencia(){
         GlobalScope.launch(Dispatchers.IO){
-            listaPizzas = pizzaDao.getPizzasPorReferencia()
+            listaFiltros = pizzaDao.getPizzasPorReferencia()
             withContext(Dispatchers.Main){
-                refrescarRecyclerView2(listaPizzas)
+                mostrarPizzasFiltros(listaFiltros)
             }
         }
+    }
+
+    fun ordenarPorReferenciaFiltro(pizzas: MutableList<Pizza>):MutableList<Pizza>{
+
+        pizzas.sortWith(compareBy(
+            { it.referencia.take(2) },
+            { it.referencia.drop(2).toIntOrNull() ?: 0 }
+        ))
+
+        return pizzas
     }
 
     fun ordenarPorReferenciaDescripcion(){
         GlobalScope.launch(Dispatchers.IO){
-            listaPizzas = pizzaDao.getPizzasReferenciaDecripcion()
+            listaFiltros = pizzaDao.getPizzasReferenciaDecripcion()
             withContext(Dispatchers.Main){
-                refrescarRecyclerView2(listaPizzas)
+                mostrarPizzasFiltros(listaFiltros)
             }
         }
+    }
+
+    fun ordenarPorReferenciaDescripcionFiltro(pizzas: MutableList<Pizza>):MutableList<Pizza>{
+
+        listaPizzas.sortWith(compareBy(
+            { it.referencia.take(2) },
+            { it.referencia.drop(2).toIntOrNull() ?: 0 },
+            { it.descripcion }
+        ))
+
+        return pizzas
     }
 
     fun mostrarRefPi(){
         GlobalScope.launch(Dispatchers.IO){
             listaPizzas = pizzaDao.getPizzasPorReferenciaPi()
             withContext(Dispatchers.Main){
-                refrescarRecyclerView2(listaPizzas)
+                mostrarPizzasFiltros(listaPizzas)
             }
         }
     }
@@ -358,7 +378,7 @@ class MainActivity : AppCompatActivity() {
         GlobalScope.launch(Dispatchers.IO){
             listaPizzas = pizzaDao.getPizzasPorReferenciaPv()
             withContext(Dispatchers.Main){
-                refrescarRecyclerView2(listaPizzas)
+                mostrarPizzasFiltros(listaPizzas)
             }
         }
     }
@@ -367,7 +387,7 @@ class MainActivity : AppCompatActivity() {
         GlobalScope.launch(Dispatchers.IO){
             listaPizzas = pizzaDao.getPizzasPorReferenciaPc()
             withContext(Dispatchers.Main){
-                refrescarRecyclerView2(listaPizzas)
+                mostrarPizzasFiltros(listaPizzas)
             }
         }
     }
@@ -376,11 +396,12 @@ class MainActivity : AppCompatActivity() {
         GlobalScope.launch(Dispatchers.IO){
             listaPizzas = pizzaDao.getPizzasPorReferenciaTo()
             withContext(Dispatchers.Main){
-                refrescarRecyclerView2(listaPizzas)
+                mostrarPizzasFiltros(listaPizzas)
             }
         }
     }
 
+    // deseleccionar los otros items por el actual
     fun deseleccionarTiposPizza(item: MenuItem){
         val tiposPizza = listOf(
             R.id.itemTodos,
@@ -397,49 +418,39 @@ class MainActivity : AppCompatActivity() {
         }
     }
 
+    fun traerIva() {
+        GlobalScope.launch(Dispatchers.IO) {
+            var ivaRecuperado = ivaDao.getIva()
+            // Si el IVA es 0 se le asinga 21%
+            if (ivaRecuperado == 0) {
+                ivaActual = 21
+                ivaDao.insertPrecioIva(ivaActual)
+            } else {
+                    ivaActual = ivaRecuperado
+            }
+        }
+    }
 
 
-//    fun ajustarIva(): Int {
-//        var iva = 0
-//        GlobalScope.launch(Dispatchers.IO) {
-//            var iva = 10
-//            ivaDao.actualizarIva(1, iva)
-//        }
-//        return iva
-//    }
-//
-//    fun traerIva() {
-//        GlobalScope.launch(Dispatchers.IO) {
-//            //traer database iva?
-//            val ivaDb = IvaDb.getDatabase(this@MainActivity, CoroutineScope(Dispatchers.IO))
-//            ivaDao = ivaDb.ivaDao()
-//            // Obtener el IVA en segundo plano
-//            CoroutineScope(Dispatchers.IO).launch {
-//                val ivaRecuperado = ivaDao.getIva() ?: 0.0
-//                withContext(Dispatchers.Main) {
-//                    // agregar condicion de si el iva es 0 o darle un valor inicial
-//                    if (ivaRecuperado == 0) {
-//                        ivaActual = 21
-//                    } else {
-//                        ivaActual = ajustarIva()
-//                    }
-//                }
-//            }
-//        }
-//    }
-//
-//
-//    fun intentConfig(){
-//        // Registrem el launcher per gestionar resultats
-//        resultLauncher = registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
-//            if (result.resultCode == RESULT_OK) { // Comprovem que el resultat és correcte
-//                val data = result.data
-//                dato1 = data?.getStringExtra("FIELD1") ?: ""
-//            }
-//            else{Log.e("MainActivity", "El IVA no cumple con el formato esperado.")
-//                return@registerForActivityResult Snackbar.make(parentLayout, "Error en el iva", Snackbar.LENGTH_SHORT).show()
-//
-//            }
-//        }
-//    }
+    fun intentConfig() {
+        // Registramos el launcher para gestionar resultados
+        resultLauncherConfig = registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
+            if (result.resultCode == RESULT_OK) {
+                val data = result.data
+                var iva = data?.getStringExtra("IVA") ?: "0"
+                ivaActual = iva.toInt()
+
+                GlobalScope.launch(Dispatchers.IO) {
+                    ivaDao.updatePrecioIva(ivaActual) // Actualizar IVA en base de datos
+                    withContext(Dispatchers.Main) {
+                        mostrarPizzas()
+                    }
+                }
+            } else {
+                Log.e("MainActivity", "El IVA no cumple con el formato esperado.")
+                Snackbar.make(parentLayout, "Error en el iva", Snackbar.LENGTH_SHORT).show()
+            }
+        }
+    }
+
 }

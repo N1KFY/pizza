@@ -2,4 +2,8 @@
 <resources>
     <color name="black">#FF000000</color>
     <color name="white">#FFFFFFFF</color>
+    <color name="color_pc">#A084D3</color>
+    <color name="color_pv">#90C391</color>
+    <color name="color_pi">#CEC26F</color>
+    <color name="color_to">#6AB5BF</color>
 </resources>
