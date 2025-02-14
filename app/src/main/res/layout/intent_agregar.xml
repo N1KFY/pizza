@@ -10,7 +10,7 @@
         android:id="@+id/textInputLayout1"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:hint="Enter field 1">
+        android:hint="Referencia">
 
         <AutoCompleteTextView
             android:id="@+id/editText1"
@@ -23,23 +23,23 @@
         android:id="@+id/editText2"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:hint="Enter field 2" />
+        android:hint="Descripcion" />
 
     <EditText
         android:id="@+id/editText3"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:hint="Enter field 3" />
+        android:hint="Tipo" />
 
     <EditText
         android:id="@+id/editText4"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:hint="Enter field 4" />
+        android:hint="Precio sin IVA" />
 
     <Button
         android:id="@+id/buttonSubmit"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="Submit" />
+        android:text="Agregar pizza" />
 </LinearLayout>

@@ -100,11 +100,11 @@ class MainActivity : AppCompatActivity() {
             R.id.itemOrdenar -> {
 
                 item.isChecked = !item.isChecked
+                itemRefDesc.isChecked = false
 
                 if (item.isChecked &&
                     (itemPi.isChecked || itemPc.isChecked || itemPv.isChecked || itemTo.isChecked)) {
 
-                    itemRefDesc.isChecked = false
                     Toast.makeText(this, "Orden por referencia activado", Toast.LENGTH_SHORT).show()
                     listaPizzas = ordenarPorReferenciaFiltro(listaPizzas)
                     mostrarPizzasFiltros(listaPizzas)
@@ -126,11 +126,11 @@ class MainActivity : AppCompatActivity() {
             R.id.itemRefDesc -> {
 
                 item.isChecked = !item.isChecked
+                itemOrdenar.isChecked = false
 
                 if (item.isChecked &&
                     (itemPi.isChecked || itemPc.isChecked || itemPv.isChecked || itemTo.isChecked)) {
 
-                    itemOrdenar.isChecked = false
                     Toast.makeText(this, "Orden por referencia activado", Toast.LENGTH_SHORT).show()
                     listaPizzas = ordenarPorReferenciaDescripcionFiltro(listaPizzas)
                     mostrarPizzasFiltros(listaPizzas)
