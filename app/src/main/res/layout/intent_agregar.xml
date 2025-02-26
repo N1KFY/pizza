@@ -5,7 +5,7 @@
     android:orientation="vertical"
     android:padding="16dp">
 
-    <!-- Campo 1 modificado para usar AutoCompleteTextView -->
+    <!-- referencia AutoCompleteTextView -->
     <com.google.android.material.textfield.TextInputLayout
         android:id="@+id/textInputLayout1"
         android:layout_width="match_parent"
@@ -16,7 +16,7 @@
             android:id="@+id/editText1"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:inputType="text" />
+            android:inputType="text"/>
     </com.google.android.material.textfield.TextInputLayout>
 
     <EditText
@@ -25,11 +25,22 @@
         android:layout_height="wrap_content"
         android:hint="Descripcion" />
 
-    <EditText
-        android:id="@+id/editText3"
+    <!-- tipo AutoCompleteTextView -->
+    <com.google.android.material.textfield.TextInputLayout
+        android:id="@+id/textInputLayout3"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:hint="Tipo" />
+        android:hint="TIPO">
+
+        <AutoCompleteTextView
+            android:id="@+id/editText3"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:inputType="none"
+            android:focusable="false"/> <!-- (android:inputType="none" = evitar teclado)  (android:focusable="false" un solo toque muestra el dropdown ) -->
+
+
+    </com.google.android.material.textfield.TextInputLayout>
 
     <EditText
         android:id="@+id/editText4"

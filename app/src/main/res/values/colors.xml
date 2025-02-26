@@ -6,4 +6,6 @@
     <color name="color_pv">#90C391</color>
     <color name="color_pi">#CEC26F</color>
     <color name="color_to">#6AB5BF</color>
+    <color name="color_borrar">#FF0000</color>
+    <color name="color_no_borrar">#3CFF00</color>
 </resources>

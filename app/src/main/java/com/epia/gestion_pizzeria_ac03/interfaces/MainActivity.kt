@@ -1,5 +1,6 @@
 package com.epia.gestion_pizzeria_ac03.interfaces
 
+import android.content.DialogInterface
 import android.content.Intent
 import android.os.Bundle
 import android.util.Log
@@ -50,11 +51,11 @@ class MainActivity : AppCompatActivity() {
         setContentView(R.layout.activity_pizzas)
         parentLayout = findViewById<View>(android.R.id.content)
         supportActionBar?.show()
-        intentPizzas()
-        intentConfig()
+        intentPizzas()  // Registrr el launcher
+        intentConfig()  // Registrar el launcher
 
-        pizzaDao = (applicationContext as App).db.pizzaDao()
-        ivaDao = (applicationContext as App).dbIva.ivaDao()
+        pizzaDao = (applicationContext as App).db.pizzaDao() // Acceso base datos PIZZA
+        ivaDao = (applicationContext as App).dbIva.ivaDao() // Acceso base datos IVA
 
         traerIva()
         mostrarPizzas()
@@ -190,6 +191,10 @@ class MainActivity : AppCompatActivity() {
                 mostrarRefTo()
                 true
             }
+//            R.id.btnBorrar->{
+//                borrarPizza(item.itemId)
+//                true
+//            }
 
             else -> super.onOptionsItemSelected(item)
         }
@@ -248,10 +253,10 @@ class MainActivity : AppCompatActivity() {
                 val data = result.data
 
                 if (data != null) {
-                    dato1 = data.getStringExtra("FIELD1") ?: ""
-                    dato2 = data.getStringExtra("FIELD2") ?: ""
-                    dato3 = data.getStringExtra("FIELD3") ?: ""
-                    dato4 = data.getStringExtra("FIELD4")?.toDoubleOrNull() ?: 0.0
+                    dato1 = data.getStringExtra("Referencia") ?: ""
+                    dato2 = data.getStringExtra("Descripcion") ?: ""
+                    dato3 = data.getStringExtra("Tipo") ?: ""
+                    dato4 = data.getStringExtra("PrecioSinIva")?.toDoubleOrNull() ?: 0.0
 
                     if (dato1.isNotEmpty() && dato2.isNotEmpty() && dato3.isNotEmpty() && dato4 > 0.0) {
                         Log.d("DEBUG", "Datos recibidos antes de insertar: dato1=$dato1, dato2=$dato2, dato3=$dato3, dato4=$dato4")
@@ -294,8 +299,6 @@ class MainActivity : AppCompatActivity() {
         // Mostrar el diàleg
         builder.create().show()
     }
-
-
 
 
     fun mostrarPizzasFiltros(list: MutableList<Pizza>) {
@@ -453,4 +456,33 @@ class MainActivity : AppCompatActivity() {
         }
     }
 
+    fun borrarPizza(pizza: Pizza) {
+
+        val builder = AlertDialog.Builder(this)
+
+        builder.setTitle("Eliminar pizza")
+        builder.setMessage("¿Seguro que quieres eliminar la pizza: ${pizza.referencia}?")
+
+        builder.setPositiveButton("SI") { _, _ ->
+            GlobalScope.launch(Dispatchers.IO) {
+                pizzaDao.delete(pizza)
+                withContext(Dispatchers.Main) {
+                    mostrarPizzas()
+                }
+            }
+        }
+        builder.setNegativeButton("NO") { dialog, _ ->
+            dialog.dismiss()
+        }
+
+        val dialog = builder.create()
+        dialog.show()
+        dialog.getButton(DialogInterface.BUTTON_POSITIVE).setTextColor(resources.getColor(R.color.color_borrar))
+        dialog.getButton(DialogInterface.BUTTON_POSITIVE).setTextColor(resources.getColor(R.color.color_no_borrar))
+    }
+
 }
+
+
+
+

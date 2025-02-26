@@ -27,6 +27,15 @@
                 android:layout_width="match_parent"
                 android:layout_height="match_parent">
 
+                <ImageView
+                    android:id="@+id/btnBorrar"
+                    android:layout_width="50dp"
+                    android:layout_height="60dp"
+                    android:visibility="visible"
+                    app:layout_constraintBottom_toTopOf="@+id/tvReferencia"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:srcCompat="@drawable/baseline_delete_forever_24" />
+
                 <TextView
                     android:id="@+id/tvPrecio_con_iva"
                     style="@style/text_styles"

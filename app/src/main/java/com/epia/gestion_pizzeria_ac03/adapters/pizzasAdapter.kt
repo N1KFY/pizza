@@ -57,7 +57,8 @@ class pizzasAdapter
         val precio_Sin_Iva = view.findViewById<TextView>(R.id.tvPrecio_sin_Iva)
         val precio_Con_Iva = view.findViewById<TextView>(R.id.tvPrecio_con_iva)
 
-        // cogemos la CARD porque haremos temas de decoración.
+
+        //CARD para temas de decoración.
         val card = view.findViewById<CardView>(R.id.card)
 
 
@@ -89,4 +90,4 @@ class pizzasAdapter
         }
 
     }
-    }
+}
