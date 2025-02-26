@@ -2,6 +2,7 @@ package com.epia.gestion_pizzeria_ac03.interfaces
 
 import android.content.Intent
 import android.os.Bundle
+import android.view.Gravity
 import android.widget.ArrayAdapter
 import android.widget.AutoCompleteTextView
 import androidx.appcompat.app.AppCompatActivity

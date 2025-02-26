@@ -456,30 +456,30 @@ class MainActivity : AppCompatActivity() {
         }
     }
 
-    fun borrarPizza(pizza: Pizza) {
-
-        val builder = AlertDialog.Builder(this)
-
-        builder.setTitle("Eliminar pizza")
-        builder.setMessage("¿Seguro que quieres eliminar la pizza: ${pizza.referencia}?")
-
-        builder.setPositiveButton("SI") { _, _ ->
-            GlobalScope.launch(Dispatchers.IO) {
-                pizzaDao.delete(pizza)
-                withContext(Dispatchers.Main) {
-                    mostrarPizzas()
-                }
-            }
-        }
-        builder.setNegativeButton("NO") { dialog, _ ->
-            dialog.dismiss()
-        }
-
-        val dialog = builder.create()
-        dialog.show()
-        dialog.getButton(DialogInterface.BUTTON_POSITIVE).setTextColor(resources.getColor(R.color.color_borrar))
-        dialog.getButton(DialogInterface.BUTTON_POSITIVE).setTextColor(resources.getColor(R.color.color_no_borrar))
-    }
+//    fun borrarPizza(pizza: Pizza) {
+//
+//        val builder = AlertDialog.Builder(this)
+//
+//        builder.setTitle("Eliminar pizza")
+//        builder.setMessage("¿Seguro que quieres eliminar la pizza: ${pizza.referencia}?")
+//
+//        builder.setPositiveButton("SI") { _, _ ->
+//            GlobalScope.launch(Dispatchers.IO) {
+//                pizzaDao.delete(pizza)
+//                withContext(Dispatchers.Main) {
+//                    mostrarPizzas()
+//                }
+//            }
+//        }
+//        builder.setNegativeButton("NO") { dialog, _ ->
+//            dialog.dismiss()
+//        }
+//
+//        val dialog = builder.create()
+//        dialog.show()
+//        dialog.getButton(DialogInterface.BUTTON_POSITIVE).setTextColor(resources.getColor(R.color.color_borrar))
+//        dialog.getButton(DialogInterface.BUTTON_POSITIVE).setTextColor(resources.getColor(R.color.color_no_borrar))
+//    }
 
 }
 

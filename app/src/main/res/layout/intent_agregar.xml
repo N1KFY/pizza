@@ -15,8 +15,8 @@
         <AutoCompleteTextView
             android:id="@+id/editText1"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:inputType="text"/>
+            android:layout_height="40dp"
+            android:inputType="text" />
     </com.google.android.material.textfield.TextInputLayout>
 
     <EditText
@@ -35,11 +35,9 @@
         <AutoCompleteTextView
             android:id="@+id/editText3"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:inputType="none"
-            android:focusable="false"/> <!-- (android:inputType="none" = evitar teclado)  (android:focusable="false" un solo toque muestra el dropdown ) -->
-
-
+            android:layout_height="40dp"
+            android:focusable="false"
+            android:inputType="none" /> <!-- (android:inputType="none" = evitar teclado)  (android:focusable="false" un solo toque muestra el dropdown ) -->
     </com.google.android.material.textfield.TextInputLayout>
 
     <EditText
