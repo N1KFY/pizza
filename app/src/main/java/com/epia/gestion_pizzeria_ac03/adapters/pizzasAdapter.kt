@@ -78,11 +78,11 @@ class pizzasAdapter
             val colorTo = ContextCompat.getColor(context, R.color.color_to)
 
             // Aplicar el color de fondo según el continente
-            if (pizza.referencia.startsWith("PI")) {
+            if (pizza.referencia.startsWith("PI") || (pizza.referencia.startsWith("pi"))) {
                 card.setCardBackgroundColor(colorPi)
-            } else if (pizza.referencia.startsWith("PV")) {
+            } else if (pizza.referencia.startsWith("PV") || (pizza.referencia.startsWith("pv"))) {
                 card.setCardBackgroundColor(colorPv)
-            } else if (pizza.referencia.startsWith("PC")) {
+            } else if (pizza.referencia.startsWith("PC") || (pizza.referencia.startsWith("pc"))) {
                 card.setCardBackgroundColor(colorPc)
             } else {
                 card.setCardBackgroundColor(colorTo)
